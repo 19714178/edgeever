@@ -952,10 +952,16 @@ export const createEdgeEverClient = (options: EdgeEverClientOptions = {}) => {
         body: JSON.stringify({ modelConfigId }),
       }),
 
-    extractVideoTranscript: (memoId: string) =>
-      request<{ status: "queued" | "running" }>(
-        `/api/v1/video-transcript-jobs/${encodeURIComponent(memoId)}/extract`,
-        { method: "POST" },
+    prepareNoteResourceTranscription: (memoId: string, resourceId: string, signal?: AbortSignal) =>
+      request<{ baseUrl: string; modelId: string; apiKey: string; resourceId: string; filename: string }>(
+        `/api/v1/memos/${encodeURIComponent(memoId)}/resources/${encodeURIComponent(resourceId)}/transcription-target`,
+        { method: "POST", signal },
+      ),
+
+    getAiTranscriptionDirectCredential: (providerId: string, signal?: AbortSignal) =>
+      request<{ apiKey: string }>(
+        `/api/v1/ai/transcription-providers/${encodeURIComponent(providerId)}/direct-credential`,
+        { method: "POST", signal },
       ),
 
     createAiProvider: (payload: AiProviderCreatePayload) =>
